@@ -10,25 +10,41 @@ angular.module('myApp.home', ['ngRoute','firebase'])
 }])
 
     // контроллер home
-.controller('HomeCtrl', ['$scope','$firebaseSimpleLogin',function($scope,$firebaseSimpleLogin) {
+.controller('HomeCtrl',
+['$scope','$location','CommonProp','$firebaseAuth',function($scope,$location,CommonProp,$firebaseAuth) {
     var firebaseObj = new Firebase("https://blinding-torch-7780.firebaseio.com");
-    var loginObj = $firebaseSimpleLogin(firebaseObj);
+    var loginObj = $firebaseAuth(firebaseObj);
 
     $scope.user = {};
     $scope.SignIn = function(event) {
             event.preventDefault(); // предотвращаем перезагрузку страницы
             var username = $scope.user.email;
             var password = $scope.user.password;
-            loginObj.$login('password', {
-                        email: username,
-                        password: password
-                    })
+            loginObj.$authWithPassword({
+                    email: username,
+                    password: password
+                })
                 .then(function(user) {
                     // колбэк запустится при успешной аутентификации аутентификацииSuccess callback
                     console.log('Authentication successful');
+                    CommonProp.setUser(user.password.email);
+                    $location.path('/welcome');
                 }, function(error) {
                     console.log('Authentication failure');
                 });
         // логика авторизации
         }
-}]);
+}])
+
+.service('CommonProp', function() {
+    var user = '';
+
+    return {
+        getUser: function() {
+            return user;
+        },
+        setUser: function(value) {
+            user = value;
+        }
+    };
+});
