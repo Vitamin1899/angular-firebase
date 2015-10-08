@@ -2,9 +2,10 @@
 
 angular.module('myApp', [
     'ngRoute',
-    'myApp.home' // подключаем новый модуль
-    'myApp.register'  // Newly added register route
-    'myApp.welcome'   // Newly added module
+    'myApp.home',
+    'myApp.register',
+    'myApp.welcome',
+    'myApp.addPost'
 ]).
 config(['$routeProvider', function($routeProvider) {
     // назначаем представление по умолчанию
