@@ -10,17 +10,22 @@ angular.module('myApp.addPost', ['ngRoute'])
 }])
 
 .controller('AddPostCtrl', ['$scope','$firebase','$location,','CommonProp',function($scope,$firebase,$location,CommonProp) {
+    var login={};
+    $scope.login=login;
     $scope.AddPost = function() {
+      login.loading = true;
       var title = $scope.article.title;
       var post = $scope.article.post;
 
       var firebaseObj = new Firebase("https://blinding-torch-7780.firebaseio.com/Articles");
       var fb = $firebase(firebaseObj);
+      var user = CommonProp.getUser();
 
-      fb.$push({title: title,post: post,emailId: CommonProp.getUser()}).then(function(ref) {
-          console.log(ref);
+      fb.$push({title: title,post: post,emailId: user,'.priority': user}).then(function(ref) {
+          login.loading = false;
           $location.path('/welcome');
       }, function(error) {
+        login.loading = false;
           console.log("Error:", error);
       });
 

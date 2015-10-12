@@ -13,11 +13,16 @@ angular.module('myApp.register', ['ngRoute','firebase'])
     $scope.mesg = 'Hello';
     var firebaseObj = new Firebase("https://blinding-torch-7780.firebaseio.com");
     var auth = $firebaseAuth(firebaseObj);
+
+    var login={};
+    $scope.login=login;
+
     $scope.signUp = function() {
         if (!$scope.regForm.$invalid) {
             var email = $scope.user.email;
             var password = $scope.user.password;
             if (email && password) {
+                login.loading = true;
                 auth.$createUser(email, password)
                     .then(function() {
                         // do things if success

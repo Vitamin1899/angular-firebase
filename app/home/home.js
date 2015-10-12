@@ -16,8 +16,16 @@ angular.module('myApp.home', ['ngRoute','firebase'])
     var loginObj = $firebaseAuth(firebaseObj);
 
     $scope.user = {};
-    $scope.SignIn = function(event) {
-            event.preventDefault(); // предотвращаем перезагрузку страницы
+    var login={};
+
+    $scope.test = function(){
+    login.loading = true;
+    }
+
+    $scope.login = login;
+    $scope.SignIn = function(e) {
+            login.loading = true;
+            e.preventDefault(); // предотвращаем перезагрузку страницы
             var username = $scope.user.email;
             var password = $scope.user.password;
             loginObj.$authWithPassword({
@@ -25,11 +33,13 @@ angular.module('myApp.home', ['ngRoute','firebase'])
                     password: password
                 })
                 .then(function(user) {
+                    login.loading = false;
                     // колбэк запустится при успешной аутентификации аутентификацииSuccess callback
                     console.log('Authentication successful');
                     CommonProp.setUser(user.password.email);
                     $location.path('/welcome');
                 }, function(error) {
+                    login.loading = false;
                     console.log('Authentication failure');
                 });
         // логика авторизации
@@ -48,3 +58,22 @@ angular.module('myApp.home', ['ngRoute','firebase'])
         }
     };
 });
+.directive('laddaLoading', [
+    function() {
+        return {
+            link: function(scope, element, attrs) {
+                var Ladda = window.Ladda;
+                var ladda = Ladda.create(element[0]);
+                // Watching login.loading for change
+                scope.$watch(attrs.laddaLoading, function(newVal, oldVal) {
+                    // if true show loading indicator
+                    if (newVal) {
+                        ladda.start();
+                    } else {
+                        ladda.stop();
+                    }
+                });
+            }
+        };
+    }
+]);
