@@ -9,13 +9,24 @@ angular.module('myApp.welcome', ['ngRoute'])
     });
 }])
 
-.controller('WelcomeCtrl', ['$scope','$firebase','CommonProp', function($scope,$firebase,CommonProp) {
+.controller('WelcomeCtrl', ['$scope','$firebase','$location','CommonProp', function($scope,$firebase,$location,CommonProp) {
     $scope.username = CommonProp.getUser();
+
+    if(!$scope.username){
+        $location.path('/home');
+    }
+
     var firebaseObj = new Firebase("https://blinding-torch-7780.firebaseio.com/Articles");
 
     var sync = $firebase(firebaseObj.startAt($scope.username).endAt($scope.username));
+
     $scope.articles = sync.$asArray();
         console.log(sync);
+
+    $scope.logout = function(){
+      CommonProp.logoutUser();
+    }
+
     $scope.editPost = function(id) {
         console.log(id);
         var firebaseObj = new Firebase("https://blinding-torch-7780.firebaseio.com/Articles/" + id);

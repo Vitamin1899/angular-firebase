@@ -10,8 +10,18 @@ angular.module('myApp.addPost', ['ngRoute'])
 }])
 
 .controller('AddPostCtrl', ['$scope','$firebase','$location,','CommonProp',function($scope,$firebase,$location,CommonProp) {
+
+    if(!CommonProp.getUser()){
+      $location.path('/home');
+    }
+
     var login={};
     $scope.login=login;
+
+    $scope.logout = function(){
+      CommonProp.logoutUser();
+    }
+
     $scope.AddPost = function() {
       login.loading = true;
       var title = $scope.article.title;
